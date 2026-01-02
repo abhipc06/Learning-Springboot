@@ -3,6 +3,7 @@ package com.learning.Product.service.service_implementation;
 
 import com.learning.Product.dto.CategoryDTO;
 import com.learning.Product.entity.Category;
+import com.learning.Product.exception.CategoryAlreadyExistsException;
 import com.learning.Product.mapper.CategoryMapper;
 import com.learning.Product.repository.CategoryRepo;
 import com.learning.Product.service.CategoryService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -18,6 +20,11 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepo categoryRepo;
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+
+        Optional<Category> optionalCategory = categoryRepo.findByName(categoryDTO.getName());
+        if (optionalCategory.isPresent()){
+            throw new CategoryAlreadyExistsException("Category "+ categoryDTO.getName() + " already exists");
+        }
         Category category = CategoryMapper.toCategoryEntity(categoryDTO);
         category = categoryRepo.save(category);
         return CategoryMapper.toCategoryDTO(category);

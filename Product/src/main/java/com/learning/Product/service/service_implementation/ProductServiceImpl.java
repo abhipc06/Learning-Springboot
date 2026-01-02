@@ -4,6 +4,7 @@ import com.learning.Product.dto.CategoryDTO;
 import com.learning.Product.dto.ProductDTO;
 import com.learning.Product.entity.Category;
 import com.learning.Product.entity.Product;
+import com.learning.Product.exception.CategoryNotFoundException;
 import com.learning.Product.mapper.ProductMapper;
 import com.learning.Product.repository.CategoryRepo;
 import com.learning.Product.repository.ProductRepo;
@@ -26,7 +27,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO createProduct(ProductDTO productDTO) {
 
        Category category=  categoryRepo.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found!!"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category id "+productDTO.getCategoryId() +" found!!"));
 
        //DTO -> entity
       Product product =  ProductMapper.toProductEntity(productDTO,category);
